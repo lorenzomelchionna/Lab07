@@ -7,6 +7,7 @@ public class TestPowerOutagesDAO {
 	public static void main(String[] args) {
 		
 		try {
+			
 			Connection connection = ConnectDB.getConnection();
 			connection.close();
 			System.out.println("Connection Test PASSED");
