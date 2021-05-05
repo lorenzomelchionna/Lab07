@@ -5,9 +5,13 @@
 package it.polito.tdp.poweroutages;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import it.polito.tdp.poweroutages.model.Model;
 import it.polito.tdp.poweroutages.model.Nerc;
+import it.polito.tdp.poweroutages.model.PowerOutage;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -15,7 +19,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class FXMLController {
-
+	
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
 
@@ -38,11 +42,63 @@ public class FXMLController {
     
     @FXML
     void doRun(ActionEvent event) {
+    	
     	txtResult.clear();
+    	
+    	try{
+    		
+    		Nerc SelectedNerc = cmbNerc.getSelectionModel().getSelectedItem();
+    		
+    		if(SelectedNerc == null) {
+    			
+    			txtResult.setText("Select a Nerc.");
+    			return;
+    			
+    		}
+    		
+    		int maxY = Integer.parseInt(txtYears.getText());
+			
+    		if (maxY <= 0) {
+    			
+				txtResult.setText("Select a number of years greater than 0");
+				return;
+				
+			}
+    		
+    		int maxH = Integer.parseInt(txtHours.getText());
+    		
+    		if(maxH <= 0) {
+    			
+    			txtResult.setText("Select a number of hours greater than 0.");
+    			return;
+    			
+    		}
+    		
+    		txtResult.setText(String.format("Computing the worst case analysis... for %d hours and %d years", maxH, maxY));
+    		
+    		List<PowerOutage> WorstCase = model.trovaWorstCase(SelectedNerc, maxY, maxH);
+    		
+    		txtResult.clear();
+    		
+    		txtResult.appendText("Tot people affected: "+model.calcolaCoinvolte(WorstCase)+"\n");
+    		
+    		txtResult.appendText("Tot hours of outage: "+model.calcolaOre(WorstCase)+"\n");
+    		
+    		for(PowerOutage po : WorstCase) {
+    			
+    			txtResult.appendText(String.format("%d %s %s %d %d", po.getYear(), po.getDateEventBegan(), po.getDateEventFinished(), po.getOutageDuration(), po.getCustomersAffected()));
+    			txtResult.appendText("\n");
+    			
+    		}
+    		
+    	}catch(NumberFormatException nfe) {
+    		txtResult.setText("Insert a valid number.");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
+    	
         assert cmbNerc != null : "fx:id=\"cmbNerc\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtYears != null : "fx:id=\"txtYears\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtHours != null : "fx:id=\"txtHours\" was not injected: check your FXML file 'Scene.fxml'.";
@@ -50,9 +106,16 @@ public class FXMLController {
         
         // Utilizzare questo font per incolonnare correttamente i dati;
         txtResult.setStyle("-fx-font-family: monospace");
+        
+        
+        
     }
     
     public void setModel(Model model) {
+    	
     	this.model = model;
+    	ObservableList<Nerc> nercList = FXCollections.observableArrayList(model.getNercList());
+    	cmbNerc.setItems(nercList);
+    	
     }
 }

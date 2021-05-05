@@ -72,7 +72,7 @@ public class Model {
 			
 	}
 
-	private int calcolaCoinvolte(List<PowerOutage> parziale) {
+	public int calcolaCoinvolte(List<PowerOutage> parziale) {
 		
 		int result = 0;
 		
@@ -83,7 +83,7 @@ public class Model {
 		
 	}
 	
-	private int calcolaOre(List<PowerOutage> parziale) {
+	public int calcolaOre(List<PowerOutage> parziale) {
 		
 		int sum = 0;
 		
@@ -93,7 +93,7 @@ public class Model {
 		return sum;
 		
 	}
-	
+
 	private boolean controllaMaxAnni(List<PowerOutage> parziale, int anniMax) {
 		
 		if(parziale.size() >= 2) {

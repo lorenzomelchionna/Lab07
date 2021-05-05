@@ -42,9 +42,9 @@ public class PowerOutageDAO {
 	
 	public List<PowerOutage> getPowerOutagesByNerc(Nerc nerc) {
 		
-		final String sql ="SELECT p.id, n.value, p.customers_affected, p.date_event_began, p.date_event_finished "
-				+ "FROM poweroutages p, nerc "
-				+ "WHERE p.nerc_id=n.id AND n.value=?";
+		final String sql ="SELECT id, nerc_id, customers_affected, date_event_began, date_event_finished "
+				+ "FROM poweroutages "
+				+ "WHERE nerc_id = ?";
 		
 		List<PowerOutage> poList = new ArrayList<>();
 		
